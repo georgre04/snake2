@@ -41,7 +41,7 @@ function makeBoard(seed,map='garden') {
   if(!MAPS[map]) map='garden';
   const b={map,seed, rng:rand32(seed), snake:[{x:5,y:7},{x:4,y:7},{x:3,y:7}], dir:'right', pending:[],
     apples:[], power:null, powerAt:6600, score:0,eaten:0, shield:0, freezeUntil:0,alive:true,
-    deathReason:'', elapsed:0,accum:0,blockedUntil:0, events:[]};
+    deathReason:'', elapsed:0,accum:0,moves:0,blockedUntil:0, events:[]};
   spawnApple(b);
   return b;
 }
@@ -62,10 +62,10 @@ function rescue(board) {
     const parts=[{x,y},{x:x-1,y},{x:x-2,y}];
     const rocks=new Set(MAPS[board.map].map(p=>p.join(',')));
     if(parts.every(p=>p.x>=0 && p.x<SIZE && p.y>=0 && p.y<SIZE && !rocks.has(key(p)) && !board.apples.some(a=>equal(a,p)))) {
-      board.snake=parts;board.dir='right';board.pending=[];board.accum=0;board.events.push('shield');return;
+      board.snake=parts;board.dir='right';board.pending=[];board.accum=0;board.moves=0;board.events.push('shield');return;
     }
   }
-  board.snake=[{x:5,y:7},{x:4,y:7},{x:3,y:7}];board.dir='right';board.pending=[];board.accum=0;
+  board.snake=[{x:5,y:7},{x:4,y:7},{x:3,y:7}];board.dir='right';board.pending=[];board.accum=0;board.moves=0;
 }
 function collide(board, reason) {
   if(board.shield>0){ board.shield=0;rescue(board);return; }
@@ -91,7 +91,7 @@ function nextStep(board){
   const apple=board.apples.find(a=>equal(a,h));
   const tail=apple?board.snake:board.snake.slice(0,-1);
   if(tail.some(p=>equal(p,h))){collide(board,'Tail');return;}
-  board.snake.unshift(h);
+  board.snake.unshift(h);board.moves++;
   if(apple){
     board.apples.splice(board.apples.indexOf(apple),1);
     board.score+=apple.type==='gold'?5:1;board.eaten++;
@@ -121,6 +121,6 @@ function advanceBoard(board,dtMs){
 function boardState(b) {
   return {map:b.map,snake:b.snake,dir:b.dir,apples:b.apples,power:b.power&&{x:b.power.x,y:b.power.y,type:b.power.type},
     score:b.score,eaten:b.eaten,alive:b.alive,shield:b.shield,freezeRemaining:Math.max(0,Math.ceil((b.freezeUntil-b.elapsed)/1000)),
-    speed:Math.round(speedMs(b)),progress:Math.max(0,Math.min(1,b.accum/speedMs(b))),deathReason:b.deathReason};
+    speed:Math.round(speedMs(b)),moves:b.moves,progress:Math.max(0,Math.min(1,b.accum/speedMs(b))),deathReason:b.deathReason};
 }
 module.exports={SIZE,ROUND_MS,MAPS,SKINS,DIRECTIONS,makeBoard,queueTurn,advanceBoard,boardState,speedMs};
