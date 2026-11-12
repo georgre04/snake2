@@ -21,8 +21,10 @@ body{padding:14px 14px 42px;overflow-x:hidden}.app{max-width:770px;margin:auto}b
 /* Arcade Edition: exact first approved design on the live, interactive home screen */
 body{background:radial-gradient(ellipse at 50% -10%,#135cb5 0,#0b2151 36%,#0c1031 78%,#090d24 100%)}
 body.home-active{padding:0 10px 16px}
+body.multi-active{padding:0 10px 24px}
 .home-active .brand{display:none}
 .home-active .app{max-width:none}
+.multi-active .app{max-width:min(1700px,98vw)}
 .home-screen{display:flex;flex-direction:column;align-items:center;gap:0;min-height:95dvh}
 .cover-ui{width:min(100%,480px,52dvh);aspect-ratio:941/1672;position:relative;overflow:hidden;isolation:isolate;box-shadow:0 0 50px #132fff3b,0 20px 50px #0007;border-radius:14px}
 .cover-image{width:100%;height:100%;display:block;object-fit:fill;user-select:none;-webkit-user-drag:none}
@@ -38,7 +40,12 @@ body.home-active{padding:0 10px 16px}
 .live-number{position:absolute;z-index:3;display:flex;justify-content:center;align-items:center;text-align:center;font-size:clamp(12px,2.5dvh,21px);font-weight:1000;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.2px;text-shadow:0 2px 3px #000,0 0 5px #719cdd;pointer-events:none}
 .live-coins{left:13.5%;top:2.65%;width:17.3%;height:3.5%;border-radius:4px;background:linear-gradient(100deg,#171c3a,#162247 70%,#1a274d)}
 .live-best{left:70.4%;top:3.55%;width:19.9%;height:3.2%;border-radius:5px;background:linear-gradient(100deg,#182244,#151c40 68%,#19254c);color:#ffe86d;text-shadow:0 2px 3px #3c1742,0 0 5px #e5ad34}
-.home-selection{margin:10px auto 0;padding:9px 17px;border-radius:100px;border:1px solid #4859b1;color:#d9f8ff;background:#122653d9;text-align:center;font-size:clamp(10px,1.7dvh,12px);font-weight:800;max-width:min(96%,480px);box-shadow:0 5px 20px #0003}
+.home-selection{margin:12px auto 0;padding:9px 17px;border-radius:100px;border:1px solid #4859b1;color:#d9f8ff;background:#122653d9;text-align:center;font-size:clamp(10px,1.7dvh,12px);font-weight:800;max-width:min(96%,480px);box-shadow:0 5px 20px #0003}
+.cover-menu-btn{position:absolute;left:12%;width:76%;min-height:8.2%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 10px;border-radius:999px;border:3px solid #f0ff85;z-index:4;background:linear-gradient(180deg,#c6ff52 0%,#4fe319 42%,#179c20 90%,#0c7326);color:#fff;font-weight:1000;font-size:clamp(16px,2.7dvh,24px);letter-spacing:.4px;text-shadow:0 2px 2px #1c6926;box-shadow:inset 0 3px 5px #ffffffac,inset 0 -5px 5px #10561ca1,0 6px 0 #154d26,0 0 22px #64ff44bb;transition:transform .12s ease,filter .12s ease}
+.cover-menu-btn:hover{filter:brightness(1.06)}
+.cover-menu-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #154d26}
+.cover-menu-btn small{font-size:clamp(8px,1dvh,10px);letter-spacing:1.2px;color:#e8ffe3}
+.cover-online-btn{top:45.5%}
 /* polished native secondary screens */
 .brand{padding:3px 0 17px}.brand .logo{font-size:clamp(26px,6vw,39px)}.brand .tagline{letter-spacing:1.3px;font-size:10px}
 .pro-subview{max-width:700px;margin:0 auto;padding-bottom:24px}.subview-head{display:flex;justify-content:space-between;align-items:center;margin-top:4px}.subview-kicker{color:#80d7ff;font-size:11px;font-weight:950;letter-spacing:2px}.sub-back{background:linear-gradient(160deg,#2d5bc4,#143273);border-radius:12px;border:1px solid #70bcfc;padding:12px 17px;box-shadow:0 4px #091d47;color:#fff;font-weight:850;font-size:13px}.sub-back:active{transform:translateY(2px);box-shadow:0 2px #091d47}
@@ -59,7 +66,7 @@ body.hide-fps #fpsLabel{display:none}
 body.no-menu-effects .view{animation:none}
 body.no-menu-effects .cover-hit{transition:none}
 @media(max-width:600px){.pro-subview .select-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pro-subview .map-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.subview-title{padding:9px 8px 14px}.selected-skin-row .button{padding:9px}.setting-line{padding:13px}.brand .coinbadge{font-size:14px}}
-@media(max-width:370px){.live-number{font-size:15px}.home-selection{font-size:10px;padding:7px 10px}.pro-subview .map-card{padding:8px 1px}.pro-subview .map-card strong{font-size:10px}}
+@media(max-width:370px){.live-number{font-size:15px}.home-selection{font-size:10px;padding:7px 10px}.cover-menu-btn{left:10%;width:80%;font-size:15px}.cover-menu-btn small{font-size:8px}.pro-subview .map-card{padding:8px 1px}.pro-subview .map-card strong{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.view{animation:none}.cover-hit{transition:none}}
 
 /* SNAKE 2 — ARCADE MENUS: matching the chosen glossy neon concept screens */
@@ -178,9 +185,9 @@ body.control-swipe .controls{display:none}
       <button class="cover-hit hit-modes" id="modeOpen" aria-label="Velg spillmodus og bane" title="Modes"></button>
       <button class="cover-hit hit-shop" id="shopOpen" aria-label="Åpne slangebutikken" title="Shop"></button>
       <button class="cover-hit hit-settings" id="settingsOpen" aria-label="Åpne innstillinger" title="Settings"></button>
+      <button type="button" class="cover-menu-btn cover-online-btn" id="multiOpen" aria-label="Play online one versus one">⚔️ <span>ONLINE 1v1</span> <small>PRIVATE ROOMS · BEST OF 5</small></button>
     </div>
     <p class="home-selection" id="homeSelection" aria-live="polite">🐍 Classic · 🌱 Hagen · Klassisk grønn</p>
-<button type="button" class="online-duel-cta" id="multiOpen" aria-label="Play online one versus one">⚔️ <span>ONLINE 1v1</span> <small>PRIVATE ROOMS · BEST OF 5</small></button>
   </section>
 
   <section id="multiView" class="view arcade-subview multiplayer-view hidden" aria-label="Snake 2 online multiplayer">
@@ -346,7 +353,7 @@ function saveSettings(){try{localStorage.setItem(settingsKey,JSON.stringify(sett
 function persist(){try{localStorage.setItem(storeKey,JSON.stringify(save))}catch(_){}}
 let chosenMode='classic',chosenMap='garden',game=null,lastFrame=0,frameCount=0,fpsTime=0,currentFPS=0,background=null,segmentImages=null,appleNormal=null,appleGold=null,appleBoss=null;
 const getMode=()=>modes.find(x=>x.id===chosenMode),getMap=()=>maps.find(x=>x.id===chosenMap),getSkin=()=>skins.find(x=>x.id===save.equipped)||skins[0];
-function setView(which){for(const view of ['menu','select','game','shop','settings','multi'])DOM(view+'View').classList.toggle('hidden',which!==view);document.body.classList.toggle('home-active',which==='menu');document.body.classList.toggle('arcade-menu-page',['select','shop','settings','multi'].includes(which));if(which!=='game')syncHome();window.scrollTo(0,0)}
+function setView(which){for(const view of ['menu','select','game','shop','settings','multi'])DOM(view+'View').classList.toggle('hidden',which!==view);document.body.classList.toggle('home-active',which==='menu');document.body.classList.toggle('multi-active',which==='multi');document.body.classList.toggle('arcade-menu-page',['select','shop','settings','multi'].includes(which));if(which!=='game')syncHome();window.scrollTo(0,0)}
 function syncHome(){const values=Object.values(save.records).map(Number).filter(Number.isFinite);DOM('homeCoins').textContent=save.coins.toLocaleString('nb-NO');DOM('homeBest').textContent=Math.max(0,...values).toLocaleString('nb-NO');DOM('homeSelection').textContent=getMode().ico+' '+getMode().name+' · '+getMap().ico+' '+getMap().name+' · '+getSkin().name;document.querySelectorAll('[data-live-coins]').forEach(e=>e.textContent=save.coins.toLocaleString('nb-NO'));document.querySelectorAll('[data-live-best]').forEach(e=>e.textContent=Math.max(0,...values).toLocaleString('nb-NO'));}
 function syncCoins(){DOM('headerCoins').textContent=save.coins;DOM('shopCoins').textContent=save.coins;syncHome()}
 function renderChoices(){
