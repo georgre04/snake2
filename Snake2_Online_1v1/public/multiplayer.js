@@ -13,7 +13,7 @@
   // Use fewer internal canvas pixels on small screens, preserving game coordinates.
   const renderScale=window.matchMedia('(max-width: 720px)').matches ? 0.75 : 1;
   for(const ctx of contexts){ctx.canvas.width=Math.round(560*renderScale);ctx.canvas.height=Math.round(560*renderScale);ctx.setTransform(renderScale,0,0,renderScale,0,0);}
-  let lastPaint=0;
+  let lastPaint=0,lastRivalPaint=0;
   function setChanged(id,value){const el=$(id);if(el.textContent!==value)el.textContent=value;}
   const cachedBg=new Map();
   function toast(s){const el=$('mpToast');el.textContent=s;el.classList.remove('hidden');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>el.classList.add('hidden'),4000);}
@@ -111,6 +111,7 @@
     $('mpLanding').classList.add('hidden');
     $('mpLobby').classList.toggle('hidden',play);
     $('mpArenaPanel').classList.toggle('hidden',!play);
+    $('multiView').classList.toggle('mp-in-game',play);
     $('mpReady').classList.toggle('hidden',r.phase!=='lobby');
     $('mpRematch').classList.toggle('hidden',!finished);
     $('mpRematch').textContent=own?.rematch?'✓ WAITING FOR FRIEND…':'↻ PLAY AGAIN (REMATCH)';
@@ -220,7 +221,11 @@
     const players=room?.players||[];
     const s0=players[seat]?.skin||'green',s1=players[1-seat]?.skin||'green';
     drawBoard(contexts[0],frameState.boards[seat],previousBoards?.[seat],s0,now);
-    drawBoard(contexts[1],frameState.boards[1-seat],previousBoards?.[1-seat],s1,now);
+    // Prioritize local animation; rival arena only needs 30 render frames per second.
+    if(now-lastRivalPaint>=33){
+      lastRivalPaint=now;
+      drawBoard(contexts[1],frameState.boards[1-seat],previousBoards?.[1-seat],s1,now);
+    }
     if(room?.phase==='playing'){
       const rem=Math.max(0,frameState.remainingMs-(now-stateArrivedAt));
       setChanged('mpTimer',Math.floor(rem/60000)+':'+String(Math.ceil(rem/1000)%60).padStart(2,'0'));
