@@ -20,7 +20,7 @@ const server=http.createServer((req,res)=>{
   const filePath=path.join(root,file[0]);
   fs.stat(filePath,(err,stat)=>{
     if(err||!stat.isFile()){res.writeHead(404);res.end('Not found');return;}
-    res.writeHead(200,{'Content-Type':file[1],'Cache-Control':file[0]==='index.html'?'no-cache':'public,max-age=3600',
+    res.writeHead(200,{'Content-Type':file[1],'Cache-Control':'no-cache, must-revalidate',
       'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','X-Frame-Options':'SAMEORIGIN',
       'Content-Security-Policy':"default-src 'self' data: blob:; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss:; object-src 'none'; base-uri 'self'",'Content-Length':stat.size});
     if(req.method==='HEAD'){res.end();return;}
