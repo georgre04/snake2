@@ -10,6 +10,11 @@
   let code='',seat=-1,token='',room=null,frameState=null,previousBoards=null,stateArrivedAt=0;
   let oldServerRound=0,toastTimeout=null,lastDirection='',lastDirectionAt=0;
   const contexts=[$('mpLocalCanvas').getContext('2d'),$('mpRivalCanvas').getContext('2d')];
+  // Use fewer internal canvas pixels on small screens, preserving game coordinates.
+  const renderScale=window.matchMedia('(max-width: 720px)').matches ? 0.75 : 1;
+  for(const ctx of contexts){ctx.canvas.width=Math.round(560*renderScale);ctx.canvas.height=Math.round(560*renderScale);ctx.setTransform(renderScale,0,0,renderScale,0,0);}
+  let lastPaint=0;
+  function setChanged(id,value){const el=$(id);if(el.textContent!==value)el.textContent=value;}
   const cachedBg=new Map();
   function toast(s){const el=$('mpToast');el.textContent=s;el.classList.remove('hidden');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>el.classList.add('hidden'),4000);}
   function persistSession(){try{sessionStorage.setItem(STORAGE,JSON.stringify({code,token}));}catch(_){}}
@@ -179,7 +184,7 @@
       g.fillText(p.type==='shield'?'🛡️':p.type==='freeze'?'❄️':'✂️',x,y);
     }
     const s=bridge.skins.find(x=>x.id===skin)||bridge.skins[0];
-    const a=Math.max(0,Math.min(1,(t-stateArrivedAt)/108));
+    const a=Math.max(0,Math.min(1,(t-stateArrivedAt)/58));
     for(let i=board.snake.length-1;i>=0;i--){
       const p=board.snake[i],old=prev?.snake?.[i]||p;
       const valid=Math.abs(p.x-old.x)<=1&&Math.abs(p.y-old.y)<=1;
@@ -196,6 +201,9 @@
   }
   function animation(now){
     requestAnimationFrame(animation);
+    // Limit expensive canvas redraws to 60 FPS on high-refresh displays.
+    if(now-lastPaint<16.5)return;
+    lastPaint=now;
     if($('multiView').classList.contains('hidden')||!frameState?.boards||seat<0)return;
     const players=room?.players||[];
     const s0=players[seat]?.skin||'green',s1=players[1-seat]?.skin||'green';
@@ -203,12 +211,12 @@
     drawBoard(contexts[1],frameState.boards[1-seat],previousBoards?.[1-seat],s1,now);
     if(room?.phase==='playing'){
       const rem=Math.max(0,frameState.remainingMs-(now-stateArrivedAt));
-      $('mpTimer').textContent=Math.floor(rem/60000)+':'+String(Math.ceil(rem/1000)%60).padStart(2,'0');
+      setChanged('mpTimer',Math.floor(rem/60000)+':'+String(Math.ceil(rem/1000)%60).padStart(2,'0'));
     }else if(room?.phase==='countdown'){
       const rem=Math.max(0,room.nextInMs-(now-stateArrivedAt));
-      $('mpBanner').textContent='⚡ ROUND STARTS IN '+Math.max(1,Math.ceil(rem/1000));
-      $('mpTimer').textContent='1:00';
-    }else if(room?.phase==='round-end')$('mpTimer').textContent='0:00';
+      setChanged('mpBanner','⚡ ROUND STARTS IN '+Math.max(1,Math.ceil(rem/1000)));
+      setChanged('mpTimer','1:00');
+    }else if(room?.phase==='round-end')setChanged('mpTimer','0:00');
   }
   function turn(dir){
     if(room?.phase!=='playing')return;
