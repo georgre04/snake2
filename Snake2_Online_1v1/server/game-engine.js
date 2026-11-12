@@ -121,6 +121,6 @@ function advanceBoard(board,dtMs){
 function boardState(b) {
   return {map:b.map,snake:b.snake,dir:b.dir,apples:b.apples,power:b.power&&{x:b.power.x,y:b.power.y,type:b.power.type},
     score:b.score,eaten:b.eaten,alive:b.alive,shield:b.shield,freezeRemaining:Math.max(0,Math.ceil((b.freezeUntil-b.elapsed)/1000)),
-    speed:Math.round(speedMs(b)),deathReason:b.deathReason};
+    speed:Math.round(speedMs(b)),progress:Math.max(0,Math.min(1,b.accum/speedMs(b))),deathReason:b.deathReason};
 }
 module.exports={SIZE,ROUND_MS,MAPS,SKINS,DIRECTIONS,makeBoard,queueTurn,advanceBoard,boardState,speedMs};
