@@ -174,7 +174,7 @@ class RoomServer {
       room.lastTick=now;room.gameElapsed+=dt;
       room.boards.forEach(b=>advanceBoard(b,dt));
       if(room.gameElapsed>=ROUND_MS||room.boards.every(b=>!b.alive)){this.broadcastSnapshot(room);this.result(room);continue;}
-      if(now-room.lastBroadcast>=100)this.broadcastSnapshot(room);
+      if(now-room.lastBroadcast>=50)this.broadcastSnapshot(room);
     }
   }
   heartbeat(){
