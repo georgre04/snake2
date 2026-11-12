@@ -184,10 +184,22 @@
       g.fillText(p.type==='shield'?'🛡️':p.type==='freeze'?'❄️':'✂️',x,y);
     }
     const s=bridge.skins.find(x=>x.id===skin)||bridge.skins[0];
-    const a=Math.max(0,Math.min(1,(t-stateArrivedAt)/58));
+    // The server sends position within the *grid step*, not just its latest grid cell.
+    // Each segment travels from the next segment's cell to its current cell.
+    // At a step boundary, progress resets and the drawn position remains continuous.
+    // Extrapolate at most 90 ms to keep browser frame rate independent of packet timing.
+    const elapsed=Math.max(0,Math.min(90,t-stateArrivedAt));
+    const a=board.alive ? Math.min(1,Math.max(0,(board.progress??1)+elapsed/Math.max(60,board.speed))) : 1;
+    const initial=board.moves===0;
     for(let i=board.snake.length-1;i>=0;i--){
-      const p=board.snake[i],old=prev?.snake?.[i]||p;
-      const valid=Math.abs(p.x-old.x)<=1&&Math.abs(p.y-old.y)<=1;
+      const p=board.snake[i],next=board.snake[i+1];
+      let old=next||p;
+      if(i===board.snake.length-1 && board.snake.length>1){
+        const before=board.snake[i-1];
+        old={x:p.x+(p.x-before.x),y:p.y+(p.y-before.y)};
+      }
+      // Portal jumps, rescues and freshly spawned snakes must not slide across the map.
+      const valid=!initial && Math.abs(p.x-old.x)+Math.abs(p.y-old.y)===1;
       const x=(valid?old.x+(p.x-old.x)*a:p.x)*cell,y=(valid?old.y+(p.y-old.y)*a:p.y)*cell;
       paintRoundRect(g,x+2,y+2,36,36,10,i===0?s.head:i%2?s.body:s.body2);
       g.strokeStyle='#ffffff55';g.lineWidth=2;g.beginPath();g.roundRect(x+4,y+4,32,32,8);g.stroke();
