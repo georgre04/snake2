@@ -31,7 +31,7 @@ server.on('upgrade',(req,socket,head)=>{
   if(req.url!=='/ws') {socket.destroy();return;}
   const peer=upgrade(req,socket,head);if(peer)rooms.attach(peer);
 });
-const ticker=setInterval(()=>rooms.tick(),25);
+const ticker=setInterval(()=>rooms.tick(),16);
 const heart=setInterval(()=>rooms.heartbeat(),25000);
 server.listen(PORT,'0.0.0.0',()=>console.log(`Snake 2 online server: http://localhost:${PORT}`));
 function shutdown(){clearInterval(ticker);clearInterval(heart);for(const p of rooms.clients)p.close(1001);server.close(()=>process.exit(0));}
