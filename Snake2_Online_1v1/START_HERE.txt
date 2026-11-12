@@ -1,0 +1,21 @@
+SNAKE 2 — ONLINE 1v1
+===================
+
+This is a REAL online multiplayer version with a Node.js server.
+Do not open index.html by itself — multiplayer requires a running server.
+
+LOCAL:
+1. Install Node.js 22 or newer.
+2. Open a terminal inside this folder.
+3. Run: npm start
+4. Open: http://localhost:3000
+
+PUBLIC ONLINE PLAY:
+1. Upload this entire project to a GitHub repository.
+2. Create a Node Web Service at https://dashboard.render.com
+3. Build: npm install --omit=dev
+4. Start: npm start
+5. Both computers open the HTTPS URL provided by Render.
+6. ONLINE 1v1 -> CREATE ROOM -> share code -> JOIN -> both READY.
+
+See README.md for details.
